@@ -278,7 +278,7 @@ public class RobotContainer {
         // }));
     }
 
-    private void configureTuningBindings() {}
+    // private void configureTuningBindings() {}
 
     public Command getAutonomousCommand() {
         return autoChooser.get();
