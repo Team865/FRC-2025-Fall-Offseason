@@ -1,0 +1,71 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2507761101973685,
+        "y": 0.9899054276315792
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.357596628289474,
+        "y": 0.7641652960526312
+      },
+      "isLocked": false,
+      "linkedName": "Left Human Player"
+    },
+    {
+      "anchor": {
+        "x": 3.6766666666666663,
+        "y": 2.961987179487179
+      },
+      "prevControl": {
+        "x": 2.2350123355263163,
+        "y": 0.929769736842105
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef C"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6609625501002004,
+      "rotationDegrees": 59.99999999999999
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "L4",
+      "waypointRelativePos": 0.5431175595238101,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "L4"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.625,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -125.00000000000001
+  },
+  "useDefaultConstraints": true
+}
