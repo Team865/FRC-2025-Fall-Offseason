@@ -9,6 +9,7 @@ import ca.warp7.frc2025.Constants.Intake;
 import ca.warp7.frc2025.FieldConstants.ReefLevel;
 import ca.warp7.frc2025.RobotContainer.Side;
 import ca.warp7.frc2025.commands.DriveCommands;
+import ca.warp7.frc2025.commands.DriveToPose;
 import ca.warp7.frc2025.generated.TunerConstants;
 import ca.warp7.frc2025.subsystems.Vision.VisionConstants;
 import ca.warp7.frc2025.subsystems.Vision.VisionIO;
@@ -40,15 +41,19 @@ import ca.warp7.frc2025.util.FieldConstantsHelper;
 import ca.warp7.frc2025.util.pitchecks.PitChecker;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -71,6 +76,12 @@ public class RobotContainer {
     // Controller
     private final CommandXboxController driveController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
+
+    // Auto-align
+    public Trigger alignedToReef;
+    private Command alignToReef;
+    private Trigger alignedToAlgae;
+    private Command alignToAlgae;
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -157,6 +168,21 @@ public class RobotContainer {
 
         leds = new LEDSubsystem(2);
         leds.setToDefault();
+
+        DriveToPose driveToReef = new DriveToPose(
+                drive,
+                () -> FieldConstantsHelper.faceToRobotPose(
+                        FieldConstantsHelper.getclosestFace(drive.getPose()), side == Side.Left));
+        alignedToReef = RobotModeTriggers.teleop()
+                .and(new Trigger(() -> !DriverStation.isAutonomousEnabled()
+                        && driveToReef.withinTolerance(Units.inchesToMeters(5), Rotation2d.fromDegrees(5))));
+        alignToReef = driveToReef;
+
+        DriveToPose driveToAlgae = new DriveToPose(drive, () -> FieldConstantsHelper.getAlgaeGoalPose(drive.getPose()));
+        alignToAlgae = driveToAlgae.withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+        alignedToAlgae = RobotModeTriggers.teleop()
+                .and(new Trigger(() -> !DriverStation.isAutonomousEnabled()
+                        && driveToAlgae.withinTolerance(Units.inchesToMeters(5), Rotation2d.fromDegrees(5))));
 
         // Create superstructure
         superstructure = new Superstructure(
